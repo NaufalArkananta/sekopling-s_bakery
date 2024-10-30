@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Cake {
+  id           Int       @id @default(autoincrement())
+  cake_name    String
+  cake_price   Float
+  cake_image   String
+  best_before  DateTime
+  cake_flavour String
+  compositions Composition[]
+  detailOrders DetailOrder[]
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+}
+
+model Material {
+  id            Int         @id @default(autoincrement())
+  material_name String
+  material_price Float
+  material_type MaterialType
+  compositions  Composition[] 
+  detailSupplies DetailSupply[]
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
+
+model Composition {
+  id         Int     @id @default(autoincrement())
+  cake       Cake    @relation(fields: [cake_id], references: [id])
+  cake_id    Int
+  material   Material @relation(fields: [material_id], references: [id])
+  material_id Int
+  quantity   Float
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Supplier {
+  id              Int            @id @default(autoincrement())
+  supplier_name   String
+  supplier_address String
+  supplier_phone  String
+  supplies        Supply[]
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+}
+
+model Supply {
+  id          Int           @id @default(autoincrement())
+  supply_date DateTime
+  supplier    Supplier      @relation(fields: [supplier_id], references: [id])
+  supplier_id Int
+  user        User          @relation(fields: [user_id], references: [id])
+  user_id     Int
+  detailSupplies DetailSupply[]
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+model DetailSupply {
+  id            Int       @id @default(autoincrement())
+  supply        Supply    @relation(fields: [supply_id], references: [id])
+  supply_id     Int
+  material      Material  @relation(fields: [material_id], references: [id])
+  material_id   Int
+  material_price Float
+  quantity      Float
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  order_date    DateTime
+  user          User          @relation(fields: [user_id], references: [id])
+  user_id       Int
+  status        OrderStatus
+  detailOrders  DetailOrder[]
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
+
+model DetailOrder {
+  id          Int    @id @default(autoincrement())
+  order       Order  @relation(fields: [order_id], references: [id])
+  order_id    Int
+  cake        Cake   @relation(fields: [cake_id], references: [id])
+  cake_id     Int
+  cake_price  Float
+  quantity    Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username   String
+  user_email  String   @unique
+  user_password String
+  user_role   UserRole
+  supplies    Supply[]
+  orders      Order[]
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+}
+
+enum MaterialType {
+  SOLID
+  POWDER
+  LIQUID
+}
+
+enum OrderStatus {
+  PROCESS
+  DELIVERED
+}
+
+enum UserRole {
+  ADMIN
+  CASHIER
+}

@@ -114,6 +114,14 @@ const deleteUser = async(req: Request, res: Response): Promise<void> => {
                 message: "User not found"
             })
         }
+
+        await prisma.order.deleteMany({
+            where: { user_id: Number(id) }
+        })
+        await prisma.supply.deleteMany({
+            where: { user_id: Number(id) }
+        })
+
         await prisma.user.delete({where: {id: Number(id)}})
         res.status(200).json({
             message: "User deleted"

@@ -6,7 +6,7 @@ import { verifyToken } from "../middleware/authorization";
 const router = Router()
 
 router.post(`/`, createUser)
-router.get(`/`, readUser)
+router.get(`/`, [verifyToken],readUser)
 router.put(`/:id`, [verifyToken], updateUser)
 router.delete(`/:id`, [verifyToken], deleteUser)
 router.post(`/auth`, [authValidation], authentication)

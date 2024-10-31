@@ -71,7 +71,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
             data: newDetail
         })
 
-        res.status(500).json({
+        res.status(200).json({
             message: "Order has been created"
         })
     } catch (error) {
@@ -81,18 +81,55 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
 
 const readOrder = async (req: Request, res: Response): Promise<void> => {
     try {
-        const search = req.query.search
-        const findOrder = search ? await prisma.order.findUnique({
-            where: { id: Number(search) }
-        }) : await prisma.order.findMany()
+        const search = req.query.search;
+
+        // Ambil semua data order beserta detailnya
+        const allData = await prisma.order.findMany({
+            include: {
+                detailOrders: true,  // Ambil detail order terkait
+            }
+        });
         
-        if (!findOrder) {
-            res.status(404).json({
-                message: "Order not found"
-            })
-        }
+        // Definisikan tipe eksplisit untuk objek hasil akhir
+        type OrderWithDetails = {
+            order_date: Date;
+            user_id: number;
+            status: OrderStatus;
+            detailOrders: {
+                cake_id: number;
+                cake_price: number;
+                quantity: number;
+            }[];
+        };
         
-        res.status(200).json(findOrder)
+        // Gabungkan data berdasarkan order_date
+        const groupedData = allData.reduce<OrderWithDetails[]>((result, currentOrder) => {
+            const { order_date, user_id, status, detailOrders } = currentOrder;
+        
+            // Cari jika order dengan tanggal yang sama sudah ada dalam result
+            let existingOrder = result.find(item => item.order_date.getTime() === order_date.getTime());
+        
+            if (existingOrder) {
+                // Jika sudah ada, gabungkan detail orders ke existingOrder
+                existingOrder.detailOrders = existingOrder.detailOrders.concat(detailOrders);
+            } else {
+                // Jika belum ada, tambahkan order baru dengan detailnya
+                result.push({
+                    order_date,
+                    user_id,
+                    status,
+                    detailOrders: [...detailOrders]
+                });
+            }
+        
+            return result;
+        }, []);
+        
+        // Kirim respons dalam format yang diinginkan
+        res.status(200).json({
+            message: "Orders and their details have been retrieved",
+            data: groupedData
+        });
         
     } catch (error) {
         res.status(500).json(error)
@@ -114,7 +151,7 @@ const updateOrder = async (req: Request, res: Response): Promise<void> => {
             })
         }
 
-        const order_date: Date = new Date(req.body.order_date) || findOrder?.order_date
+        const order_date: Date = req.body.date || findOrder?.order_date
         const user_id: number = req.body.user_id || findOrder?.user_id
         const status: OrderStatus = req.body.status || findOrder?.status
         const detailOrder: DetailOrder[] = req.body.detailOrder || findOrder?.detailOrders
@@ -170,12 +207,13 @@ const updateOrder = async (req: Request, res: Response): Promise<void> => {
             data: newDetail
         })
 
-        res.status(500).json({
+        res.status(200).json({
             message: "Order has been updated"
         })
 
     } catch (error) {
         res.status(500).json(error)
+        console.log(error)
     }
 }
 

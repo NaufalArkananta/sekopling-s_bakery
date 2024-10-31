@@ -84,7 +84,7 @@ const readComposition = async (req: Request, res: Response): Promise <void> => {
         type CompositionWithDetails = {
             cake_id: number;
             cake: any;
-            materials: {
+            compositions: {
                 material: any;
                 quantity: number;
             }[];
@@ -98,14 +98,14 @@ const readComposition = async (req: Request, res: Response): Promise <void> => {
             let existingCake = result.find(item => item.cake_id === cake_id);
 
             if (existingCake) {
-                // Jika sudah ada, tambahkan material ke dalam array materials
-                existingCake.materials.push({  material, quantity });
+                // Jika sudah ada, tambahkan material ke dalam array compositions
+                existingCake.compositions.push({  material, quantity });
             } else {
                 // Jika belum ada, buat objek baru
                 result.push({
                     cake_id,
                     cake,  // Detail dari cake
-                    materials: [{ material, quantity }]  // Array material
+                    compositions: [{ material, quantity }]  // Array material
                 });
             }
 

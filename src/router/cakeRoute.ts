@@ -2,12 +2,13 @@ import { Router } from "express";
 import { createCake, deleteCake, readCake, updateCake } from "../controller/cakeController";
 import { uploadCakeImage } from "../middleware/uploudCakeImage";
 import { createValidation, updateValidation } from "../middleware/cakeValidation";
+import { verifyToken } from "../middleware/authorization";
 
 const router = Router();
 
-router.post(`/`,[uploadCakeImage.single(`cake_image`), createValidation], createCake);
-router.get(`/`, readCake)
-router.put(`/:id`, [updateValidation], updateCake)
-router.delete(`/:id`, deleteCake)
+router.post(`/`,[verifyToken, uploadCakeImage.single(`cake_image`), createValidation], createCake);
+router.get(`/`, [verifyToken], readCake)
+router.put(`/:id`, [verifyToken, updateValidation], updateCake)
+router.delete(`/:id`, [verifyToken], deleteCake)
 
 export default router;

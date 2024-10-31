@@ -1,16 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 
-// create a rule/schema for adding new medicine
-
 const detailSchema = Joi.object({
-    material_id: Joi.number().required(),
+    material_id: Joi.number(),
+    material_price: Joi.number(),
     quantity: Joi.number().min(1).required()
 })
 
 const createSchema = Joi.object({
-    cake_id: Joi.number().required(),
-    composition: Joi.array().items(detailSchema).min(1).required()
+    supplier_id: Joi.number().required(),
+    user_id: Joi.number().required(),
+    supply_date: Joi.date().required(),
+    detailSupply: Joi.array().items(detailSchema).min(1).required()
 });
 
 const createValidation = (req: Request, res: Response, next: NextFunction): void => {
@@ -25,8 +26,10 @@ const createValidation = (req: Request, res: Response, next: NextFunction): void
 
 // update a rule/schema for adding new medicine
 const updateSchema = Joi.object({
-    cake_id: Joi.number().optional(),
-    composition: Joi.array().items(detailSchema).min(1).optional()
+    supplier_id: Joi.number().optional(),
+    user_id: Joi.number().optional(),
+    supply_date: Joi.date().optional(),
+    detailSupply: Joi.array().items(detailSchema).min(1).optional()
 });
 
 const updateValidation = (req: Request, res: Response, next: NextFunction): void => {

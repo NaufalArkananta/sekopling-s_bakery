@@ -1,1 +1,7 @@
 30-November-2024
+
+1. Check order endpoint: done
+2. create order middleware: done
+3. Adding tokenVerify in all routes: done
+
+*fix delete user

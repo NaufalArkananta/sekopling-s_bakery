@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { createOrder, deleteOrder, readOrder, updateOrder } from "../controller/orderController";
+import { verifyToken } from "../middleware/authorization";
 
 const router = Router()
 
-router.post(`/`, [], createOrder)
-router.get(`/`, [], readOrder)
-router.put(`/:id`, [], updateOrder)
-router.delete(`/:id`, [], deleteOrder)
+router.post(`/`, [verifyToken], createOrder)
+router.get(`/`, [verifyToken], readOrder)
+router.put(`/:id`, [verifyToken], updateOrder)
+router.delete(`/:id`, [verifyToken], deleteOrder)
 
 export default router

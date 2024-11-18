@@ -26,33 +26,38 @@ const createValidation = (req: Request, res: Response, next: NextFunction): void
         res.status(400).json({
             message: validate.error.details.map(it => it.message).join(", "), // Error messages separated by comma
         });
+        return
     }
     next();
 }
 
-// update a rule/schema for adding new medicine
 const updateSchema = Joi.object({
-    cake_name: Joi.string().optional(),
-    cake_price: Joi.number().min(1).optional(),
-    best_before: Joi.date().optional(),
-    cake_flavour: Joi.string().optional(),
+    cake_name: Joi.string().strict().optional(),
+    cake_price: Joi.number().min(1).strict().optional(),
+    best_before: Joi.date().strict().optional(),
+    cake_flavour: Joi.string().strict().optional(),
 });
 
 const updateValidation = (req: Request, res: Response, next: NextFunction): void => {
     const validate = updateSchema.validate(req.body, { abortEarly: false }); // To get all errors
     if (validate.error) {
-        let fileName: string = req.file?.filename || ``
-        let pathFile = path.join(ROOT_DIRECTORY,"public", "cake-image", fileName)
-        /** check file is exists*/
-        let fileExists = fs.existsSync(pathFile)
-        // apakah ada file yg dihapus
-        if(fileExists && fileName !==``) {
-            fs.unlinkSync(pathFile)
+        let fileName: string = req.file?.filename || ``;
+        let pathFile = path.join(ROOT_DIRECTORY, "public", "cake-image", fileName);
+        /** check file is exists */
+        let fileExists = fs.existsSync(pathFile);
+        
+        // hapus file jika ditemukan dan filename tidak kosong
+        if (fileExists && fileName !== ``) {
+            fs.unlinkSync(pathFile);
         }
+        
+        // Gabungkan semua pesan kesalahan menjadi satu
         res.status(400).json({
-            message: validate.error.details.map(it => it.message).join(", "), // Error messages separated by comma
+            message: validate.error.details.map(it => it.message).join(", "),
         });
+        return; // tambahkan return agar kode di bawahnya tidak dijalankan
     }
+    
     next();
 };
 

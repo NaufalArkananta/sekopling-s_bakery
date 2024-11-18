@@ -8,7 +8,7 @@ const router = Router();
 
 router.post(`/`,[verifyToken, uploadCakeImage.single(`cake_image`), createValidation], createCake);
 router.get(`/`, [verifyToken], readCake)
-router.put(`/:id`, [verifyToken, updateValidation], updateCake)
+router.put(`/:id`, [verifyToken, updateValidation, uploadCakeImage.single(`cake_image`)], updateCake)
 router.delete(`/:id`, [verifyToken], deleteCake)
 
 export default router;

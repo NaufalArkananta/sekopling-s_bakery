@@ -39,6 +39,7 @@ const createSupply = async (req: Request, res: Response): Promise<void> => {
             res.status(404).json({
                 message: `User not found`
             })
+            return
         }
 
         // checking material (memastikan id material tersedia)
@@ -61,6 +62,7 @@ const createSupply = async (req: Request, res: Response): Promise<void> => {
             res.status(404).json({
                 message: `Material(s) not found: ${notFoundMaterial.join(", ")}`
             })
+            return
         }
     
         // save supply data
@@ -95,6 +97,7 @@ const createSupply = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({
             message: "Supply has been created",
         })
+        return
     
     } catch (error) {
         res.status(500).json(error)

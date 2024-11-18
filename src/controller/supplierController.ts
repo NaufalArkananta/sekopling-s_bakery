@@ -19,6 +19,7 @@ const createSupllier = async (req: Request, res: Response): Promise<void> => {
             message: "Supplier has been created",
             data: newSupplier
         })
+        return
 
     } catch (error) {
         console.log(error)

@@ -23,6 +23,7 @@ const createComposition = async (req: Request, res: Response): Promise<void> => 
             res.status(404).json({
                 message: `Cake not found`
             });
+            return
         }
 
         // check material id from array
@@ -38,6 +39,7 @@ const createComposition = async (req: Request, res: Response): Promise<void> => 
             res.status(404).json({
                 message: `Material(s) not found: ${notFoundMaterial.join(", ")}`
             });
+            return
         }
 
         // Create compositions in bulk using createMany
@@ -61,6 +63,7 @@ const createComposition = async (req: Request, res: Response): Promise<void> => 
             message: "Composition has been created",
             data: newCompositions
         });
+        return
 
     } catch (error) {
         res.status(500).json(error)
@@ -117,6 +120,7 @@ const readComposition = async (req: Request, res: Response): Promise <void> => {
             message: "Composition has been retrieved",
             data: groupedData
         });
+        return
 
     } catch (error) {
         res.status(500).json(error)
@@ -136,6 +140,7 @@ const updateComposition = async (req: Request, res: Response):Promise <void> => 
             res.status(404).json({
                 message: `Composition not found`
             });
+            return
         }
 
         // Komposisi baru yang akan diperbarui
@@ -154,6 +159,7 @@ const updateComposition = async (req: Request, res: Response):Promise <void> => 
             res.status(404).json({
                 message: `Material(s) not found: ${notFoundMaterial.join(", ")}`
             });
+            return
         }
 
         // Update compositions satu per satu dengan transaksi
@@ -175,6 +181,7 @@ const updateComposition = async (req: Request, res: Response):Promise <void> => 
             message: "Composition has been updated",
             data: composition
         });
+        return
     } catch (error) {
         res.status(500).json(error)
     }

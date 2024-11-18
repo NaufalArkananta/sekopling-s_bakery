@@ -14,6 +14,7 @@ const createValidation = (req: Request, res: Response, next: NextFunction): void
         res.status(400).json({
             message: validate.error.details.map(it => it.message).join(", "), // Error messages separated by comma
         });
+        return
     }
     next();
 }
@@ -31,6 +32,7 @@ const updateValidation = (req: Request, res: Response, next: NextFunction): void
         res.status(400).json({
             message: validate.error.details.map(it => it.message).join(", "), // Error messages separated by comma
         });
+        return
     }
     next();
 };

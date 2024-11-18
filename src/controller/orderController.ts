@@ -23,6 +23,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
             res.status(404).json({
                 message: "User not found"
             })
+            return
         }
         
         const arrayCakeId = detailOrder.map(item => item.cake_id)
@@ -43,6 +44,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
             res.status(404).json({
                 message: `Cake(s) not found: ${notFoundCake.join(", ")}`
             })
+            return
         }
 
         const newOrder = await prisma.order.create({
@@ -74,6 +76,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({
             message: "Order has been created"
         })
+        return
     } catch (error) {
         res.status(500).json(error)
     }

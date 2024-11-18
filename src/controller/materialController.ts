@@ -32,16 +32,25 @@ const readMaterial = async (req: Request, res: Response): Promise<void> => {
     try {
         const search = req.query.search
 
-        const allData = await search ? prisma.material.findMany({where: {
-            OR: [{ material_name: { contains: search?.toString() || " " } 
+        const allData = search ? await prisma.material.findMany({ where: {
+            OR: [{
+                material_name: { contains: search?.toString() || " " }
             }]
-        } }) 
+        } })
         : await prisma.material.findMany()
+
+        if(!allData) {
+            res.status(404).json({
+                message: `Cake not found`
+            })
+            return
+        }
 
         res.status(201).json({
             message: `Material has been retrived`,
             data: allData
         })
+        return
     } catch (error) {
         res.status(500).json(error)
     }

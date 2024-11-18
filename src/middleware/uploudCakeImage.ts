@@ -31,8 +31,10 @@ const filterFile = (req: Request, file: Express.Multer.File, callback: multer.Fi
 
     if(isAllow){
         callback(null, true)
+        return
     }else {
         callback(new Error(`your file is not allow to uploud`))
+        return
     }
 }
 

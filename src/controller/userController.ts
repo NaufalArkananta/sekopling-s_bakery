@@ -18,6 +18,7 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
             res.status(400).json({
                 message: `Email has exists`
             })
+            return
         }
         
         const hashedPassword = await bcrypt.hash(user_password, 10)
@@ -35,6 +36,8 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
             message: `User has been created`,
             data: newUser
         })
+        
+        return
 
     } catch (error) {
         console.log(error)
